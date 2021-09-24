@@ -12,11 +12,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Clima',
+      title: 'Reporte meteorológico',
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: MyHomePage(title: 'Clima'),
+      home: MyHomePage(title: 'Reporte meteorológico'),
     );
   }
 }
@@ -51,48 +51,56 @@ class _MyHomePageState extends State<MyHomePage> {
       body: ListView.builder(
           itemCount: _weatherList.length,
           itemBuilder: (context, index) {
-        dynamic weather = _weatherList[index];
-        dynamic weatherIcon = ((){
-          switch(weather['weather']){
-            case 'cloudy':
-            case 'pcloudy':
-              return Icons.wb_cloudy_outlined;
-            case 'rain':
-            case 'lightrain':
-              return Icons.water;
-            case 'clear':
-            case 'ts':
-              return Icons.wb_sunny_outlined;
-            default:
-              return Icons.cancel;
-          }
-        })();
+            dynamic weather = _weatherList[index];
+            dynamic weatherIcon = ((){
+              switch(weather['weather']){
+                case 'cloudy':
+                case 'pcloudy':
+                case 'mcloudy':
+                  return Icons.wb_cloudy_outlined;
+                case 'rain':
+                case 'lightrain':
+                case 'ishower':
+                  return Icons.water;
+                case 'clear':
+                case 'ts':
+                  return Icons.wb_sunny_outlined;
+                default:
+                  return Icons.cancel;
+              }
+            })();
+            String weathertype = weather['weather'];
+            DateTime date = DateTime.parse(weather['date'].toString());
+            int max = weather['temp2m']['max'];
+            int min = weather['temp2m']['min'];
 
-        DateTime date = DateTime.parse(weather['date'].toString());
-        int max = weather['temp2m']['max'];
-        int min = weather['temp2m']['min'];
-
-        return ListTile(title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            Row(
-              children: [
-                Icon(weatherIcon),
-                SizedBox(width: 30),
-                Text("${date.day}/${date.month}/${date.year}")
+            return ListTile(title: Row(
+              children: <Widget>[
+                Row(
+                  children: [
+                    Text("${date.day}/${date.month}/${date.year}",style: TextStyle(fontSize: 14.0),),
+                    SizedBox(width: 15),
+                  ],
+                )
+                ,
+                Row(
+                  children: [
+                    Text("Max:$max°C",style: TextStyle(fontSize: 14.0)),
+                    SizedBox(width: 15),
+                    Text("Min:$min°C",style: TextStyle(fontSize: 14.0))
+                  ],
+                ),
+                Row(
+                  children: [
+                    SizedBox(width: 15),
+                    Icon(weatherIcon),
+                    SizedBox(width: 15),
+                    Text(weathertype, style: TextStyle(fontSize: 14.0),),
+                  ],
+                )
               ],
-            )
-            ,
-            Row(
-              children: [
-                Text("Max:$max°C"),
-                SizedBox(width: 30),
-                Text("Min:$min°C")
-              ],
-            )
-          ],
-        ));
-      }),
+            ));
+          }),
       floatingActionButton: FloatingActionButton(
         onPressed: _callAPI,
         tooltip: 'Increment',
